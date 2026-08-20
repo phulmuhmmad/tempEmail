@@ -16,6 +16,15 @@ def get_domain():
     if response.status_code == 200 and response.json().get('hydra:member'):
         return response.json()['hydra:member'][0]['domain']
     raise Exception("Failed to fetch available domains.")
+def login(email, password):
+    """Logs into the Mail.tm account and returns the authentication token."""
+    payload = {"address": email, "password": password}
+    response = requests.post(f"{API_URL}/token", json=payload)
+    
+    if response.status_code == 200:
+        return response.json().get("token")
+        
+    raise Exception(f"Failed to login: {response.text}")
 
 def create_account(email, password):
     """Creates a temporary account on Mail.tm."""
@@ -63,7 +72,10 @@ def main():
         email_address = f"{username}@{domain}"
         
         # 2. Register account and get authorization token
-        create_account(email_address, password)
+        op=input(f"Do you want to create the account {email_address}? (y/n): ").strip().lower()
+        if op == 'y':
+            create_account(email_address, password)
+            
         token = get_token(email_address, password)
         print(f"✅ Account created successfully! You can use the following credentials:")
         print(f"   Username: {username}")
