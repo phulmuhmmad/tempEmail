@@ -53,14 +53,21 @@ def main():
     try:
         # 1. Setup account credentials
         domain = get_domain()
-        username = random_string(10)
-        password = random_string(12)
+        op = input("Do you want to generate a random email address? (y/n): ").strip().lower()
+        if op == 'y':
+                username = random_string(10)
+                password = random_string(12)
+        else:
+            username = input("Enter desired username (before @): ").strip()
+            password = input("Enter desired password: ").strip()
         email_address = f"{username}@{domain}"
         
         # 2. Register account and get authorization token
         create_account(email_address, password)
         token = get_token(email_address, password)
-        
+        print(f"✅ Account created successfully! You can use the following credentials:")
+        print(f"   Username: {username}")
+        print(f" Password: {password}")
         print(f"📬 Generated Temp Email: {email_address}")
         print("Waiting for incoming emails... (Press Ctrl+C to exit)\n")
 
@@ -92,6 +99,7 @@ def main():
             
     except KeyboardInterrupt:
         print("\n👋 Script stopped. Your temporary inbox has been abandoned.")
+
     except Exception as e:
         print(f"\n❌ Error: {e}")
 
